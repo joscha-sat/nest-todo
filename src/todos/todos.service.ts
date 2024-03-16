@@ -3,7 +3,7 @@ import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './entities/todo.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 
 @Injectable()
 export class TodosService {
@@ -14,22 +14,26 @@ export class TodosService {
     return this.todoRepo.save(newTodo);
   }
 
-  async findAll(skip?: number, limit?: number) {
-    const [results, total] = await this.todoRepo.findAndCount({
-      skip,
+  async findAll(skip?: number, limit?: number, done?: boolean) {
+    // Define the find options based on the provided parameters
+    const findOptions: FindManyOptions = {
+      where: {}, // Initialize an empty where clause
+      skip: skip,
       take: limit,
-    });
+    };
+
+    // If a status was provided, add it to the where clause
+    if (done !== undefined) {
+      findOptions.where['done'] = done;
+    }
+
+    // Execute the query and return the results and total count
+    const [results, total] = await this.todoRepo.findAndCount(findOptions);
 
     return {
       total,
       results,
     };
-  }
-
-  findByStatus(done: boolean) {
-    return this.todoRepo.find({
-      where: { done },
-    });
   }
 
   findOne(id: number) {

@@ -4,25 +4,18 @@ import {
   Delete,
   Get,
   Param,
-  ParseBoolPipe,
   Patch,
-  Post,
   Query,
 } from '@nestjs/common';
 import { TodosService } from './todos.service';
-import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ParseBooleanPipe } from '../pipes/parse-boolean-pipe';
 
 @ApiTags('Todo')
 @Controller('todo')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
-
-  @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todosService.create(createTodoDto);
-  }
 
   @Get()
   @ApiQuery({
@@ -35,18 +28,20 @@ export class TodosController {
     name: 'limit',
     required: false,
     type: Number,
-    description: 'Limit on the number of records to send',
+    description: 'Limit on the number of records to return',
+  })
+  @ApiQuery({
+    name: 'done',
+    required: false,
+    type: Boolean,
+    description: 'Check status of Todo',
   })
   findAll(
     @Query('skip') skip: number | undefined,
     @Query('limit') limit: number | undefined,
+    @Query('done', new ParseBooleanPipe()) done: boolean | undefined,
   ) {
-    return this.todosService.findAll(skip, limit);
-  }
-
-  @Get('status')
-  findByStatus(@Query('done', new ParseBoolPipe()) done: boolean) {
-    return this.todosService.findByStatus(done);
+    return this.todosService.findAll(skip, limit, done);
   }
 
   @Get(':id')
@@ -64,8 +59,8 @@ export class TodosController {
     return this.todosService.remove(id);
   }
 
-  @Delete()
-  removeAll() {
-    return this.todosService.removeAll();
-  }
+  // @Delete()
+  // removeAll() {
+  //   return this.todosService.removeAll();
+  // }
 }
