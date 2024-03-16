@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ParseBooleanPipe } from '../pipes/parse-boolean-pipe';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateTodoDto } from './dto/create-todo.dto';
+import { FindAllQuery } from './dto/get-todo-params.dto';
 
 @ApiTags('Todo')
 @Controller('todo')
@@ -25,14 +25,8 @@ export class TodosController {
   }
 
   @Get()
-  @createApiQuery('skip', 'Number of records to skip')
-  @createApiQuery('limit', 'Limit of records to return')
-  @createApiQuery('done', 'Return all todo of selected status boolean', Boolean)
-  findAll(
-    @Query('skip') skip: number | undefined,
-    @Query('limit') limit: number | undefined,
-    @Query('done', new ParseBooleanPipe()) done: boolean | undefined,
-  ) {
+  findAll(@Query() query: FindAllQuery) {
+    const { skip, limit, done } = query;
     return this.todosService.findAll(skip, limit, done);
   }
 
@@ -51,22 +45,8 @@ export class TodosController {
     return this.todosService.remove(id);
   }
 
-  // @Delete()
-  // removeAll() {
-  //   return this.todosService.removeAll();
-  // }
-}
-
-function createApiQuery(
-  name: string,
-  description: string,
-  type: any = Number,
-  required = false,
-) {
-  return ApiQuery({
-    name,
-    required,
-    type,
-    description,
-  });
+  @Delete()
+  removeAll() {
+    return this.todosService.removeAll();
+  }
 }

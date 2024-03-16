@@ -12,7 +12,7 @@ export class Todo {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   title: string;
 
   @Column({ nullable: true })
