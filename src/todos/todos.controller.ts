@@ -5,17 +5,24 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ParseBooleanPipe } from '../pipes/parse-boolean-pipe';
+import { CreateTodoDto } from './dto/create-todo.dto';
 
 @ApiTags('Todo')
 @Controller('todo')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
+
+  @Post()
+  async create(@Body() createTodoDto: CreateTodoDto) {
+    return this.todosService.create(createTodoDto);
+  }
 
   @Get()
   @ApiQuery({
