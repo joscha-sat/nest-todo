@@ -36,8 +36,8 @@ export class TodosService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} todo`;
+  findOne(id: string) {
+    return this.todoRepo.findOne({ where: { id } });
   }
 
   update(id: string, updateTodoDto: UpdateTodoDto) {

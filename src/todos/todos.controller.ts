@@ -25,24 +25,9 @@ export class TodosController {
   }
 
   @Get()
-  @ApiQuery({
-    name: 'skip',
-    required: false,
-    type: Number,
-    description: 'Number of records to skip',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    description: 'Limit on the number of records to return',
-  })
-  @ApiQuery({
-    name: 'done',
-    required: false,
-    type: Boolean,
-    description: 'Check status of Todo',
-  })
+  @createApiQuery('skip', 'Number of records to skip')
+  @createApiQuery('limit', 'Limit of records to return')
+  @createApiQuery('done', 'Return all todo of selected status boolean', Boolean)
   findAll(
     @Query('skip') skip: number | undefined,
     @Query('limit') limit: number | undefined,
@@ -53,7 +38,7 @@ export class TodosController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.todosService.findOne(+id);
+    return this.todosService.findOne(id);
   }
 
   @Patch(':id')
@@ -70,4 +55,18 @@ export class TodosController {
   // removeAll() {
   //   return this.todosService.removeAll();
   // }
+}
+
+function createApiQuery(
+  name: string,
+  description: string,
+  type: any = Number,
+  required = false,
+) {
+  return ApiQuery({
+    name,
+    required,
+    type,
+    description,
+  });
 }
