@@ -2,7 +2,11 @@ import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
 export type ErrorCollection = { [k: string]: ErrorCollectionItem };
-export type ErrorCollectionItem = [number | HttpStatus, string, string];
+export type ErrorCollectionItem = {
+  status: number | HttpStatus;
+  type: string;
+  message: string;
+};
 
 /**
  * Use this to cast your `ErrorCollection` and keep the autocomplete feature.
@@ -25,8 +29,9 @@ export function ApiResponses(errorCollection: ErrorCollection) {
     (key) => {
       const errorCollectionItem: ErrorCollectionItem = errorCollection[key];
       return ApiResponse({
-        status: errorCollectionItem[0],
-        description: errorCollectionItem[1] + ': ' + errorCollectionItem[2],
+        status: errorCollectionItem.status,
+        description:
+          errorCollectionItem.type + ': ' + errorCollectionItem.message,
       });
     },
   );

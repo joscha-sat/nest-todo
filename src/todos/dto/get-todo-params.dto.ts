@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 import {
   IsOptionalInt,
   ToBoolean,
 } from '../../utility-services/utility-service';
+import { Transform } from 'class-transformer';
 
 export class FindAllQuery {
   @ApiProperty({ required: false, description: 'Number of records to skip' })
@@ -21,7 +22,8 @@ export class FindAllQuery {
     required: false,
     description: 'Filter todos based on their status',
   })
+  @Transform(ToBoolean)
+  @IsOptional()
   @IsBoolean()
-  @ToBoolean()
   done: boolean;
 }

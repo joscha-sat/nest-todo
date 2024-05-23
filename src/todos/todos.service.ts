@@ -3,8 +3,15 @@ import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './entities/todo.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { TODO_ERROR_CREATE } from './todo-http-error.enum';
+import { createFindOptions } from '../shared/helper.service';
+
+type FindAllProps = {
+  skip?: number;
+  limit?: number;
+  done?: boolean;
+};
 
 @Injectable()
 export class TodosService {
@@ -23,21 +30,17 @@ export class TodosService {
     return this.todoRepo.save(newTodo);
   }
 
-  async findAll(skip?: number, limit?: number, done?: boolean) {
-    console.log(done);
-    // Define the find options based on the provided parameters
-    const findOptions: FindManyOptions = {
-      where: {}, // Initialize an empty where clause
-      skip: skip,
-      take: limit ?? 20,
-    };
+  async findAll({ skip, limit, done }: FindAllProps) {
+    const whereOptions = done !== undefined ? { done } : {};
+    const relations = ['user'];
 
-    // If a status was provided, add it to the where clause
-    if (done !== undefined) {
-      findOptions.where['done'] = done;
-    }
+    const findOptions = createFindOptions({
+      whereOptions,
+      relations,
+      skip,
+      limit,
+    });
 
-    // Execute the query and return the results and total count
     const [results, total] = await this.todoRepo.findAndCount(findOptions);
 
     return {

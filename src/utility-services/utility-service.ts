@@ -1,16 +1,17 @@
-import { Transform, Type } from 'class-transformer';
+import { TransformFnParams, Type } from 'class-transformer';
 import { IsInt, IsOptional } from 'class-validator';
 
-export function ToBoolean(): PropertyDecorator {
-  return Transform(({ value }) => {
-    console.log(value);
-    if (value === 'true' || value === '1') {
-      return true;
-    } else if (value === 'false' || value === '0') {
-      return false;
-    }
-    return value;
-  });
+export function ToBoolean({ value }: TransformFnParams): boolean | undefined {
+  console.log('utility ', value);
+  if (value === '' || value === undefined) {
+    return undefined;
+  }
+  if (value === 'true' || value === '1') {
+    return true;
+  } else if (value === 'false' || value === '0') {
+    return false;
+  }
+  return value;
 }
 
 export function IsOptionalInt(): PropertyDecorator {

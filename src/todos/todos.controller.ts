@@ -27,7 +27,7 @@ export class TodosController {
   @Get()
   findAll(@Query() query: FindAllQuery) {
     const { skip, limit, done } = query;
-    return this.todosService.findAll(skip, limit, done);
+    return this.todosService.findAll({ skip, limit, done });
   }
 
   @Get(':id')
