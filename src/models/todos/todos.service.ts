@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './entities/todo.entity';
 import { Repository } from 'typeorm';
 import { TODO_ERROR_CREATE } from './todo-http-error.enum';
-import { applySearch } from '../../shared/helper.service';
+import { addRelationsAndJoin, applySearch } from '../../shared/helper.service';
 import { ResponseWithRecords } from '../users/users.service';
 
 type FindAllProps = {
@@ -39,15 +39,16 @@ export class TodosService {
     search,
   }: FindAllProps): Promise<ResponseWithRecords<Todo>> {
     const queryBuilder = this.todoRepo.createQueryBuilder('todo');
+    const relations: Array<keyof Todo | string> = ['user', 'user.address'];
 
-    queryBuilder.leftJoinAndSelect('todo.user', 'user');
-
-    queryBuilder.leftJoinAndSelect('user.address', 'address');
+    // add relations and populate data
+    addRelationsAndJoin<Todo>(queryBuilder, relations);
 
     applySearch(queryBuilder, 'todo', search, [
       'title',
       'description',
       'user.name',
+      'address.street',
     ]);
 
     done !== undefined &&
