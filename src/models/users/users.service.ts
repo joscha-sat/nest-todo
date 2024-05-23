@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
+import { addRelationsAndJoin } from '../../shared/helper.service';
 
 export type ResponseWithRecords<T> = { total: number; results: T[] };
 
@@ -16,7 +17,11 @@ export class UsersService {
   }
 
   async findAll(): Promise<ResponseWithRecords<User>> {
-    const [results, total] = await this.usersRepo.findAndCount();
+    const queryBuilder = this.usersRepo.createQueryBuilder('user');
+
+    addRelationsAndJoin(queryBuilder, ['address']);
+
+    const [results, total] = await queryBuilder.getManyAndCount();
 
     return {
       total,
