@@ -1,10 +1,11 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Todo } from '../../todos/entities/todo.entity';
+import { Address } from '../../address/entities/address.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   name: string;
@@ -16,4 +17,9 @@ export class User {
     cascade: true,
   })
   todos: Todo[];
+
+  @OneToMany(() => Address, (address) => address.user, {
+    cascade: true,
+  })
+  address: Address[];
 }

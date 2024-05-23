@@ -24,15 +24,15 @@ export class UsersService {
     };
   }
 
-  findOne(id: number): Promise<User> {
+  findOne(id: string): Promise<User> {
     return this.usersRepo.findOne({ where: { id } });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+  update(id: string, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
     return this.usersRepo.update(id, updateUserDto);
   }
 
-  remove(id: number): Promise<DeleteResult> {
+  remove(id: string): Promise<DeleteResult> {
     return this.usersRepo.delete(id);
   }
 }

@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TodosModule } from './todos/todos.module';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
+import { TodosModule } from './models/todos/todos.module';
+import { UsersModule } from './models/users/users.module';
+import { AddressModule } from './models/address/address.module';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { UsersModule } from './users/users.module';
     }),
     TodosModule,
     UsersModule,
+    AddressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

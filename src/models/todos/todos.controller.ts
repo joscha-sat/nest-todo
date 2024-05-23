@@ -12,7 +12,7 @@ import { TodosService } from './todos.service';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateTodoDto } from './dto/create-todo.dto';
-import { FindAllQuery } from './dto/get-todo-params.dto';
+import { FindAllQueryParams } from './dto/get-todo-params.dto';
 
 @ApiTags('Todo')
 @Controller('todo')
@@ -25,9 +25,8 @@ export class TodosController {
   }
 
   @Get()
-  findAll(@Query() query: FindAllQuery) {
-    const { skip, limit, done } = query;
-    return this.todosService.findAll({ skip, limit, done });
+  findAll(@Query() queryParams: FindAllQueryParams) {
+    return this.todosService.findAll(queryParams);
   }
 
   @Get(':id')

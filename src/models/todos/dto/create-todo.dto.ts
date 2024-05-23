@@ -6,4 +6,7 @@ export class CreateTodoDto {
 
   @ApiProperty({ default: 'Eine Beschreibung' })
   description: string;
+
+  @ApiProperty({ required: false })
+  userId: number;
 }

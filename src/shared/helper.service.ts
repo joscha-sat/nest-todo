@@ -1,4 +1,4 @@
-import { FindManyOptions, FindOptionsWhere } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, SelectQueryBuilder } from 'typeorm';
 
 type FindOptionsProps<T> = {
   whereOptions: FindOptionsWhere<T>;
@@ -17,6 +17,31 @@ export function createFindOptions<T>({
     where: whereOptions,
     relations: relations,
     skip: skip,
-    take: limit ?? 20,
+    take: limit ?? 10,
   };
+}
+
+export function addRelationsAndJoin<T>(
+  queryBuilder: SelectQueryBuilder<T>,
+  relations: Array<keyof T>,
+) {
+  relations.forEach((relation) => {
+    queryBuilder.leftJoinAndSelect(
+      `${queryBuilder.alias}.${relation as string}`,
+      relation as string,
+    );
+  });
+}
+
+export function applySearch<T>(
+  qb: SelectQueryBuilder<T>,
+  alias: string,
+  search?: string,
+  fields: string[] = [],
+): void {
+  if (!search) return;
+
+  fields.forEach((field) =>
+    qb.orWhere(`${alias}.${field} LIKE :search`, { search: `%${search}%` }),
+  );
 }

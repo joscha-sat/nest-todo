@@ -1,16 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional } from 'class-validator';
-import {
-  IsOptionalInt,
-  ToBoolean,
-} from '../../utility-services/utility-service';
-import { Transform } from 'class-transformer';
+import { IsOptionalInt } from '../utility-services/utility-service';
+import { IsOptional } from 'class-validator';
+// Query parameters:
+// - skip: number
+// - limit: number
+// - search: string
 
-export class FindAllQuery {
+export class BasePaginationSearchDto {
+  // skip
   @ApiProperty({ required: false, description: 'Number of records to skip' })
   @IsOptionalInt()
   skip: number;
 
+  // limit
   @ApiProperty({
     required: false,
     description: 'Limit on the number of records to return',
@@ -18,12 +20,11 @@ export class FindAllQuery {
   @IsOptionalInt()
   limit: number;
 
+  // search
   @ApiProperty({
     required: false,
-    description: 'Filter todos based on their status',
+    description: 'Search value',
   })
-  @Transform(ToBoolean)
   @IsOptional()
-  @IsBoolean()
-  done: boolean;
+  search: string;
 }

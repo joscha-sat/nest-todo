@@ -5,11 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './entities/todo.entity';
 import { Repository } from 'typeorm';
 import { TODO_ERROR_CREATE } from './todo-http-error.enum';
-import { createFindOptions } from '../shared/helper.service';
+import { addRelationsAndJoin, applySearch } from '../../shared/helper.service';
+import { ResponseWithRecords } from '../users/users.service';
 
 type FindAllProps = {
   skip?: number;
   limit?: number;
+  search?: string;
   done?: boolean;
 };
 
@@ -30,23 +32,31 @@ export class TodosService {
     return this.todoRepo.save(newTodo);
   }
 
-  async findAll({ skip, limit, done }: FindAllProps) {
-    const whereOptions = done !== undefined ? { done } : {};
-    const relations = ['user'];
+  async findAll({
+    skip,
+    limit,
+    done,
+    search,
+  }: FindAllProps): Promise<ResponseWithRecords<Todo>> {
+    const queryBuilder = this.todoRepo.createQueryBuilder('todo');
+    const relations: (keyof Todo)[] = ['user'];
 
-    const findOptions = createFindOptions({
-      whereOptions,
-      relations,
-      skip,
-      limit,
-    });
+    addRelationsAndJoin<Todo>(queryBuilder, relations);
+    applySearch(queryBuilder, 'todo', search, [
+      'title',
+      'description',
+      'user.name',
+    ]);
 
-    const [results, total] = await this.todoRepo.findAndCount(findOptions);
+    done !== undefined &&
+      queryBuilder.andWhere(`${queryBuilder.alias}.done = :done`, { done });
 
-    return {
-      total,
-      results,
-    };
+    const [results, total] = await queryBuilder
+      .skip(skip)
+      .take(limit ?? 10)
+      .getManyAndCount();
+
+    return { total, results };
   }
 
   findOne(id: string) {
