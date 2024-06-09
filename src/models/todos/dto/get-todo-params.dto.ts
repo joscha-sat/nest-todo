@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { ToBoolean } from '../../../utility-services/utility-service';
+
 import { BasePaginationSearchDto } from '../../../shared/base-pagination-search-dto';
+import { ToBoolean } from '../../../shared/utility-service';
 
 // Query parameters:
 // - skip: number
@@ -10,7 +11,7 @@ import { BasePaginationSearchDto } from '../../../shared/base-pagination-search-
 // - search: string
 // - done: boolean
 
-export class FindAllQueryParams extends BasePaginationSearchDto {
+export class TodoFindAllQueryParams extends BasePaginationSearchDto {
   // done
   @ApiProperty({
     required: false,

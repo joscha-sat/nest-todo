@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptionalInt } from '../utility-services/utility-service';
 import { IsOptional } from 'class-validator';
+import { IsOptionalInt } from './utility-service';
 // Query parameters:
 // - skip: number
 // - limit: number
