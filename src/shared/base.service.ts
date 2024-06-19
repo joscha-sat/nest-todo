@@ -18,7 +18,7 @@ export interface ResponseWithRecords<Entity> {
 export class BaseService<Entity> {
   constructor(
     public repo: Repository<Entity>,
-    public relations: Array<string> = [],
+    public findAllPopulations: Array<string> = [],
     public searchKeys: Array<string> = [],
   ) {}
 
@@ -33,7 +33,7 @@ export class BaseService<Entity> {
     const alias = this.repo.metadata.tableName;
     const queryBuilder = this.repo.createQueryBuilder(alias);
 
-    addRelationsAndJoin<Entity>(queryBuilder, this.relations);
+    addRelationsAndJoin<Entity>(queryBuilder, this.findAllPopulations);
     applySearch(queryBuilder, findAllProps?.search, this.searchKeys);
 
     const [results, total] = await queryBuilder

@@ -44,8 +44,8 @@ export class TodosController {
     return this.todosService.remove(id);
   }
 
-  @Delete()
-  removeAll() {
-    return this.todosService.removeAll();
-  }
+  // @Delete()
+  // removeAll() {
+  //   return this.todosService.removeAll();
+  // }
 }

@@ -4,7 +4,6 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
 // Swagger
-// Swagger
 const config = new DocumentBuilder()
   .setTitle('Todo Swagger API')
   .setVersion('1.0')
@@ -18,6 +17,14 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const document = SwaggerModule.createDocument(app, config);
+  // Alphabetize the paths
+  document.paths = Object.keys(document.paths)
+    .sort((path1, path2) => path1.localeCompare(path2))
+    .reduce((obj, key) => {
+      obj[key] = document.paths[key];
+      return obj;
+    }, {} as any);
+
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
