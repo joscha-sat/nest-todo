@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { addRelationsAndJoin, applySearch } from './helper.service';
+import {
+  addRelationsAndJoin,
+  applyFilters,
+  applySearch,
+} from './helper.service';
 
 type FindAllProps = {
   skip?: number;
   limit?: number;
   search?: string;
   done?: boolean;
+  title?: string;
 };
 
 export interface ResponseWithRecords<Entity> {
@@ -20,6 +25,7 @@ export class BaseService<Entity> {
     public repo: Repository<Entity>,
     public findAllPopulations: Array<string> = [],
     public searchKeys: Array<string> = [],
+    public filterValues: Array<string> = [],
   ) {}
 
   async create(createEntityDto: any): Promise<Entity[]> {
@@ -35,6 +41,15 @@ export class BaseService<Entity> {
 
     addRelationsAndJoin<Entity>(queryBuilder, this.findAllPopulations);
     applySearch(queryBuilder, findAllProps?.search, this.searchKeys);
+
+    const filterArray = this.filterValues.reduce(
+      (obj, item) => ({ ...obj, [item]: findAllProps[item] }),
+      {},
+    );
+
+    console.log(filterArray);
+
+    applyFilters(queryBuilder, filterArray);
 
     const [results, total] = await queryBuilder
       .skip(findAllProps?.skip ?? 0)

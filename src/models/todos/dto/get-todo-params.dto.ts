@@ -21,4 +21,11 @@ export class TodoFindAllQueryParams extends BasePaginationSearchDto {
   @IsOptional()
   @IsBoolean()
   done: boolean;
+
+  @ApiProperty({
+    required: false,
+    description: 'Filter todos based on their title',
+  })
+  @IsOptional()
+  title: string;
 }

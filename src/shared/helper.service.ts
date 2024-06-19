@@ -66,6 +66,27 @@ export function applySearch<T>(
   );
 }
 
+/**
+ * Applies multiple filters to a SelectQueryBuilder based on exact value.
+ *
+ * @param queryBuilder
+ * @param {Object} filters - An object where the keys are the fields to filter by and the values are the exact value to filter by
+ * @return {void}
+ */
+export function applyFilters<T>(
+  queryBuilder: SelectQueryBuilder<T>,
+  filters: { [key: string]: string | number | boolean },
+): void {
+  Object.keys(filters).forEach((field) => {
+    const value = filters[field];
+    if (field && value !== undefined && value !== null) {
+      queryBuilder.andWhere(`${queryBuilder.alias}.${field} = :${field}`, {
+        [field]: value,
+      });
+    }
+  });
+}
+
 export function key<Model, Type = any>(key: KeyOf<Model, Type>) {
   return key;
 }

@@ -14,6 +14,7 @@ export class TodosService extends BaseService<Todo> {
       todoRepo,
       ['user', 'user.address'],
       ['title', 'description', 'user.name', 'address.street'],
+      ['done', 'title'],
     );
   }
 
